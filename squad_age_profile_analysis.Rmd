@@ -15,7 +15,7 @@ knitr::opts_chunk$set(dpi=300,fig.width=7)
 
 This is small analytics exercise to examine the distribution of minutes played based on the age of the players.
 
-I got inspiration for this from the excellent [http://petermckeever.com/2019/04/creating-squad-age-profiles/](article) by @petermckeever.
+I got inspiration for this from the excellent [article](http://petermckeever.com/2019/04/creating-squad-age-profiles/) by @petermckeever.
 
 His work was done in Python but I decided to try and re-create it using R.
 
