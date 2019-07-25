@@ -19,34 +19,42 @@ the data.
 First, we’ll load our library dependencies and specify the squad page
 URL we will be using.
 
-    library(tidyverse)
-    library(rvest)
-    library(lubridate)
-    library(stringr)
-    library(scales)
+``` r
+library(tidyverse)
+library(rvest)
+library(lubridate)
+library(stringr)
+library(scales)
 
-    url <- "https://www.espn.com/soccer/team/squad/_/id/359/league/ENG.1/season/2018"
+url <- "https://www.espn.com/soccer/team/squad/_/id/359/league/ENG.1/season/2018"
+```
 
 Next, we will scrape the goalie information. I had to check the page
 source-code to determine the correct table-indexes.
 
-    goalie <- read_html(url) %>% 
-      html_nodes("table") %>% 
-      magrittr::extract2(3) %>% 
-      html_table(fill = TRUE,  header = TRUE, trim = TRUE)
+``` r
+goalie <- read_html(url) %>% 
+  html_nodes("table") %>% 
+  magrittr::extract2(3) %>% 
+  html_table(fill = TRUE,  header = TRUE, trim = TRUE)
+```
 
 Now, we’ll extract the rest of the squad details from the 2nd table.
 
-    outfield <- read_html(url) %>% 
-      html_nodes("table") %>% 
-      magrittr::extract2(6) %>% 
-      html_table(fill = TRUE,  header = TRUE, trim = TRUE)
+``` r
+outfield <- read_html(url) %>% 
+  html_nodes("table") %>% 
+  magrittr::extract2(6) %>% 
+  html_table(fill = TRUE,  header = TRUE, trim = TRUE)
+```
 
 Let’s combine both sets into a single dataframe and take a peek.
 
-    squad <- bind_rows(goalie, outfield)
+``` r
+squad <- bind_rows(goalie, outfield)
 
-    squad
+squad
+```
 
     ##                           Name POS Age     HT      WT            NAT APP
     ## 1                   Petr Cech1   G  37  6' 5" 198 lbs Czech Republic   7
@@ -111,17 +119,19 @@ Let’s combine both sets into a single dataframe and take a peek.
 
 Let’s continue by keeping only our columns of interest.
 
-    squad <- squad %>% 
-      select(
-        Name, 
-        Position = POS, 
-        Age, 
-        HT, 
-        WT, 
-        NAT
-        )
+``` r
+squad <- squad %>% 
+  select(
+    Name, 
+    Position = POS, 
+    Age, 
+    HT, 
+    WT, 
+    NAT
+    )
 
-    squad
+squad
+```
 
     ##                           Name Position Age     HT      WT            NAT
     ## 1                   Petr Cech1        G  37  6' 5" 198 lbs Czech Republic
@@ -160,7 +170,9 @@ this easily though with a string replace using a regular expression.
 Let’s do a quick sanity-check before we make the update to our
 dataframe.
 
-    squad %>% mutate(Name = str_replace(Name, "\\d+$", "")) %>% pull(Name)
+``` r
+squad %>% mutate(Name = str_replace(Name, "\\d+$", "")) %>% pull(Name)
+```
 
     ##  [1] "Petr Cech"                 "Bernd Leno"               
     ##  [3] "Héctor Bellerín"           "Sokratis Papastathopoulos"
@@ -183,14 +195,18 @@ so we’ll go ahead and perform this cleaning step on our dataframe. While
 we’re at it, let’s also remove the “lbs” label from the WT column and
 convert it to an integer.
 
-    squad <- squad %>% 
-      mutate(Name = str_replace(Name, "\\d+$", "")) %>% 
-      mutate(WT = as.integer(str_replace(WT, "lbs", ""))) 
+``` r
+squad <- squad %>% 
+  mutate(Name = str_replace(Name, "\\d+$", "")) %>% 
+  mutate(WT = as.integer(str_replace(WT, "lbs", ""))) 
+```
 
     ## Warning in rlang::eval_tidy(~as.integer(str_replace(WT, "lbs", "")),
     ## <environment>): NAs introduced by coercion
 
-    squad
+``` r
+squad
+```
 
     ##                         Name Position Age     HT  WT            NAT
     ## 1                  Petr Cech        G  37  6' 5" 198 Czech Republic
@@ -227,12 +243,14 @@ Next, let’s convert our HT values to a standard of inches. We’ll have to
 separate out our height-feet and height-inches to calculate total height
 in inches.
 
-    (squad <- squad %>% separate(HT, c("feet","inches","drop")) %>% 
-      select(-drop) %>% 
-      mutate_at(c("feet","inches"), as.integer) %>% 
-      mutate(HT = (feet*12) + inches) %>% 
-      select(Name, Position, Age, HT, WT, NAT)
-    )
+``` r
+(squad <- squad %>% separate(HT, c("feet","inches","drop")) %>% 
+  select(-drop) %>% 
+  mutate_at(c("feet","inches"), as.integer) %>% 
+  mutate(HT = (feet*12) + inches) %>% 
+  select(Name, Position, Age, HT, WT, NAT)
+)
+```
 
     ##                         Name Position Age HT  WT            NAT
     ## 1                  Petr Cech        G  37 77 198 Czech Republic
@@ -268,50 +286,60 @@ in inches.
 For our final cleaning step, we will convert the POS column which holds
 the player’s position to a factor and change the level names.
 
-    squad <- squad %>% 
-      mutate(Position = factor(Position, levels = c("Defense","Forward","Goalie","Midfield"))) 
+``` r
+squad <- squad %>% 
+  mutate(Position = as.factor(Position))
+
+levels(squad$Position) <- c("Defense","Forward","Goalie","Midfield")
+```
 
 Now, we’ll load our player-ratings data that was scraped from
 [WhoScored.com](http://whoscored.com)
 
-    ratings <- readRDS("arsenal_whoscored_player_ratings.rds") %>% as_tibble
+``` r
+ratings <- readRDS("arsenal_whoscored_player_ratings.rds") %>% as_tibble
+```
 
 We’ll aggregate to the player-level taking the average of their rating
 and calculate total minutes played.
 
-    player_agg <- ratings %>% 
-      group_by(player_name) %>% 
-      summarise(
-        total_mins = sum(minutes_played),
-        avg_rating = mean(rating)
-                ) %>% 
-      arrange(desc(total_mins))
+``` r
+player_agg <- ratings %>% 
+  group_by(player_name) %>% 
+  summarise(
+    total_mins = sum(minutes_played),
+    avg_rating = mean(rating)
+            ) %>% 
+  arrange(desc(total_mins))
+```
 
 Now, we’ll combine our aggregated player dataframe with our squad
 profile. This will serve as our datasource for our viz. I did have to
 make edits to Aubameyang’s and Sokratis’s names so that their data would
 align with our ratings data.
 
-    squad[27,"Name"] = "Pierre Emerick-Aubameyang"
-    squad[4, "Name"] = "Sokratis"
-    afc <- inner_join(squad, player_agg, by=c("Name"="player_name"))
+``` r
+squad[27,"Name"] = "Pierre Emerick-Aubameyang"
+squad[4, "Name"] = "Sokratis"
+afc <- inner_join(squad, player_agg, by=c("Name"="player_name"))
+```
 
 Now, let’s produce our viz.
 
-    theme_set(theme_light())
+``` r
+theme_set(theme_light())
 
-    afc %>% 
-      ggplot(aes(x = Age, y = total_mins/(38*90), label = Name)) +
-      geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
-      geom_text(size = 3, vjust = "middle", hjust = "left", nudge_x = 0.3) +
-      scale_color_manual(values = c("navy","purple","yellow","maroon")) +
-      scale_x_continuous(breaks = seq(18,40, by=2)) +
-      scale_y_continuous(labels = scales::percent_format()) +
-      labs(y = "% of Total EPL Minutes")
+afc %>% 
+  ggplot(aes(x = Age, y = total_mins/(38*90), label = Name)) +
+  geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
+  geom_text(size = 3, vjust = "middle", hjust = "left", nudge_x = 0.3) +
+  scale_color_manual(values = c("navy","purple","yellow","maroon")) +
+  scale_x_continuous(breaks = seq(18,40, by=2)) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(y = "% of Total EPL Minutes")
+```
 
-    ## Warning: Removed 25 rows containing missing values (geom_point).
-
-![](squad_age_profile_analysis_files/figure-markdown_strict/unnamed-chunk-13-1.png)
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
 We can see the graph looks a bit easy with some overlapping names. We
 can use the `check_overlap` property to help deal with this, but I found
@@ -320,36 +348,38 @@ it removed several key players from the graph.
 Another option to clean things up is by showing only the last-name.
 We’ll use the handy tidyr `extract` function to accomplish this.
 
-    (
-      afc <- extract(afc, Name, c("fname","lname"), "([^ ]+)(.*)", remove = FALSE)
-    )
+``` r
+(
+  afc <- extract(afc, Name, c("fname","lname"), "([^ ]+)(.*)", remove = FALSE)
+)
+```
 
     ##                         Name        fname               lname Position Age
-    ## 1                  Petr Cech         Petr                Cech     <NA>  37
-    ## 2                 Bernd Leno        Bernd                Leno     <NA>  27
-    ## 3            Héctor Bellerín       Héctor            Bellerín     <NA>  24
-    ## 4                   Sokratis     Sokratis                         <NA>  31
-    ## 5          Laurent Koscielny      Laurent           Koscielny     <NA>  33
-    ## 6       Stephan Lichtsteiner      Stephan        Lichtsteiner     <NA>  35
-    ## 7                Rob Holding          Rob             Holding     <NA>  23
-    ## 8              Nacho Monreal        Nacho             Monreal     <NA>  33
-    ## 9           Shkodran Mustafi     Shkodran             Mustafi     <NA>  27
-    ## 10            Carl Jenkinson         Carl           Jenkinson     <NA>  27
-    ## 11   Konstantinos Mavropanos Konstantinos          Mavropanos     <NA>  21
-    ## 12            Sead Kolasinac         Sead           Kolasinac     <NA>  26
-    ## 13            Mohamed Elneny      Mohamed              Elneny     <NA>  27
-    ## 14        Henrikh Mkhitaryan      Henrikh          Mkhitaryan     <NA>  30
-    ## 15              Aaron Ramsey        Aaron              Ramsey     <NA>  28
-    ## 16                Mesut Özil        Mesut                Özil     <NA>  30
-    ## 17            Lucas Torreira        Lucas            Torreira     <NA>  23
-    ## 18    Ainsley Maitland-Niles      Ainsley      Maitland-Niles     <NA>  21
-    ## 19                Alex Iwobi         Alex               Iwobi     <NA>  23
-    ## 20              Denis Suárez        Denis              Suárez     <NA>  25
-    ## 21          Matteo Guendouzi       Matteo           Guendouzi     <NA>  20
-    ## 22              Granit Xhaka       Granit               Xhaka     <NA>  26
-    ## 23       Alexandre Lacazette    Alexandre           Lacazette     <NA>  28
-    ## 24 Pierre Emerick-Aubameyang       Pierre  Emerick-Aubameyang     <NA>  30
-    ## 25             Danny Welbeck        Danny             Welbeck     <NA>  28
+    ## 1                  Petr Cech         Petr                Cech   Goalie  37
+    ## 2                 Bernd Leno        Bernd                Leno   Goalie  27
+    ## 3            Héctor Bellerín       Héctor            Bellerín  Defense  24
+    ## 4                   Sokratis     Sokratis                      Defense  31
+    ## 5          Laurent Koscielny      Laurent           Koscielny  Defense  33
+    ## 6       Stephan Lichtsteiner      Stephan        Lichtsteiner  Defense  35
+    ## 7                Rob Holding          Rob             Holding  Defense  23
+    ## 8              Nacho Monreal        Nacho             Monreal  Defense  33
+    ## 9           Shkodran Mustafi     Shkodran             Mustafi  Defense  27
+    ## 10            Carl Jenkinson         Carl           Jenkinson  Defense  27
+    ## 11   Konstantinos Mavropanos Konstantinos          Mavropanos  Defense  21
+    ## 12            Sead Kolasinac         Sead           Kolasinac  Defense  26
+    ## 13            Mohamed Elneny      Mohamed              Elneny Midfield  27
+    ## 14        Henrikh Mkhitaryan      Henrikh          Mkhitaryan Midfield  30
+    ## 15              Aaron Ramsey        Aaron              Ramsey Midfield  28
+    ## 16                Mesut Özil        Mesut                Özil Midfield  30
+    ## 17            Lucas Torreira        Lucas            Torreira Midfield  23
+    ## 18    Ainsley Maitland-Niles      Ainsley      Maitland-Niles Midfield  21
+    ## 19                Alex Iwobi         Alex               Iwobi Midfield  23
+    ## 20              Denis Suárez        Denis              Suárez Midfield  25
+    ## 21          Matteo Guendouzi       Matteo           Guendouzi Midfield  20
+    ## 22              Granit Xhaka       Granit               Xhaka Midfield  26
+    ## 23       Alexandre Lacazette    Alexandre           Lacazette  Forward  28
+    ## 24 Pierre Emerick-Aubameyang       Pierre  Emerick-Aubameyang  Forward  30
+    ## 25             Danny Welbeck        Danny             Welbeck  Forward  28
     ##    HT  WT            NAT total_mins avg_rating
     ## 1  77 198 Czech Republic        588   7.050000
     ## 2  75 183        Germany       2832   6.682188
@@ -377,48 +407,41 @@ We’ll use the handy tidyr `extract` function to accomplish this.
     ## 24 74 174          Gabon       2732   7.097500
     ## 25 72 161        England        147   6.393750
 
-    afc[4, "lname"] = "Sokratis"
+``` r
+afc[4, "lname"] = "Sokratis"
 
-    p <- afc %>% 
-      ggplot(aes(x = Age, y = total_mins/(38*90), label = lname)) +
-      geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
-      geom_text(size = 3, vjust = "middle", hjust = "left", nudge_x = 0.3) +
-      scale_color_manual(values = c("navy","purple","yellow","maroon")) +
-      scale_x_continuous(breaks = seq(18,40, by=2)) +
-      scale_y_continuous(labels = scales::percent_format()) +
-      labs(y = "% of Total EPL Minutes")
+q <- afc %>% 
+  ggplot(aes(x = Age, y = total_mins/(38*90), label = lname)) +
+  geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
+  geom_text(size = 3, vjust = "top", hjust = "middle", nudge_y = -0.02, nudge_x = 0.5) +
+  scale_color_manual(values = c("navy","purple","yellow","maroon")) +
+  scale_x_continuous(breaks = seq(18,40, by=2)) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(y = "% Played of Total EPL Minutes")
 
-    q <- afc %>% 
-      ggplot(aes(x = Age, y = total_mins/(38*90), label = lname)) +
-      geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
-      geom_text(size = 3, vjust = "top", hjust = "middle", nudge_y = -0.02, nudge_x = 0.5) +
-      scale_color_manual(values = c("navy","purple","yellow","maroon")) +
-      scale_x_continuous(breaks = seq(18,40, by=2)) +
-      scale_y_continuous(labels = scales::percent_format()) +
-      labs(y = "% Played of Total EPL Minutes")
+q
+```
 
-    q
-
-    ## Warning: Removed 25 rows containing missing values (geom_point).
-
-![](squad_age_profile_analysis_files/figure-markdown_strict/unnamed-chunk-14-1.png)
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 This looks good but let’s go one-step farther by adding a shaded region
 showing the peak age-bracket which we’ll define as from 25 - 30 years
 old.
 
-    q <- q + geom_rect(fill = "green", alpha = 0.01, aes(xmin=25, xmax=30, ymin=0, ymax=1))
+``` r
+q <- q + geom_rect(fill = "green", alpha = 0.01, aes(xmin=25, xmax=30, ymin=0, ymax=1))
+```
 
 we’ll wrap up by adding a title and some annotations.
 
-    q + labs(
-      title = "Arsenal | Squad Age Profile Analysis",
-      subtitle = "Premier League, 2018/19",
-      caption = "Data from Whoscored.com/ESPN"
-    ) +
-      annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 4.0) +
-      annotate("text", x = 36.5, y = 0.99, label = "@DesiGoonerMD", size = 2.5)
+``` r
+q + labs(
+  title = "Arsenal | Squad Age Profile Analysis",
+  subtitle = "Premier League, 2018/19",
+  caption = "Data from Whoscored.com/ESPN"
+) +
+  annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 4.0) +
+  annotate("text", x = 36.5, y = 0.99, label = "@DesiGoonerMD", size = 2.5)
+```
 
-    ## Warning: Removed 25 rows containing missing values (geom_point).
-
-![](squad_age_profile_analysis_files/figure-markdown_strict/unnamed-chunk-16-1.png)
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-16-1.png)

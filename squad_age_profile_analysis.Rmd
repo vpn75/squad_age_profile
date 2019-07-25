@@ -2,7 +2,9 @@
 title: "Squad age profile"
 author: "Vamsi Nath"
 date: "7/25/2019"
-output: md_document
+output: 
+  md_document:
+    variant: markdown_github
 ---
 
 ```{r setup, include=FALSE}
@@ -106,7 +108,9 @@ For our final cleaning step, we will convert the POS column which holds the play
 
 ```{r}
 squad <- squad %>% 
-  mutate(Position = factor(Position, levels = c("Defense","Forward","Goalie","Midfield"))) 
+  mutate(Position = as.factor(Position))
+
+levels(squad$Position) <- c("Defense","Forward","Goalie","Midfield")
   
 ```
 
@@ -161,15 +165,6 @@ Another option to clean things up is by showing only the last-name. We'll use th
   afc <- extract(afc, Name, c("fname","lname"), "([^ ]+)(.*)", remove = FALSE)
 )
 afc[4, "lname"] = "Sokratis"
-
-p <- afc %>% 
-  ggplot(aes(x = Age, y = total_mins/(38*90), label = lname)) +
-  geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
-  geom_text(size = 3, vjust = "middle", hjust = "left", nudge_x = 0.3) +
-  scale_color_manual(values = c("navy","purple","yellow","maroon")) +
-  scale_x_continuous(breaks = seq(18,40, by=2)) +
-  scale_y_continuous(labels = scales::percent_format()) +
-  labs(y = "% of Total EPL Minutes")
 
 q <- afc %>% 
   ggplot(aes(x = Age, y = total_mins/(38*90), label = lname)) +
