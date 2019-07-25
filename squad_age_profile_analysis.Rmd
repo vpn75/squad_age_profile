@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(dpi=300,fig.width=7)
 ```
 
 ## Arsenal Squad Age-Profile analysis
@@ -57,8 +57,6 @@ Let's combine both sets into a single dataframe and take a peek.
 
 ```{r}
 squad <- bind_rows(goalie, outfield)
-
-squad
 ```
 
 Let's continue by keeping only our columns of interest.
@@ -74,7 +72,6 @@ squad <- squad %>%
     NAT
     )
 
-squad
 ```
 
 We can also see we need to do some cleanup on the player names which annoyingly have their number appended at the end. We can take care of this easily though with a string replace using a regular expression. Let's do a quick sanity-check before we make the update to our dataframe.
@@ -90,7 +87,6 @@ squad <- squad %>%
   mutate(Name = str_replace(Name, "\\d+$", "")) %>% 
   mutate(WT = as.integer(str_replace(WT, "lbs", ""))) 
   
-squad
 ```
 
 Next, let's convert our HT values to a standard of inches. We'll have to separate out our height-feet and height-inches to calculate total height in inches.
@@ -137,6 +133,7 @@ Now, we'll combine our aggregated player dataframe with our squad profile. This 
 ```{r}
 squad[27,"Name"] = "Pierre Emerick-Aubameyang"
 squad[4, "Name"] = "Sokratis"
+
 afc <- inner_join(squad, player_agg, by=c("Name"="player_name"))
 ```
 
@@ -164,6 +161,7 @@ Another option to clean things up is by showing only the last-name. We'll use th
 (
   afc <- extract(afc, Name, c("fname","lname"), "([^ ]+)(.*)", remove = FALSE)
 )
+
 afc[4, "lname"] = "Sokratis"
 
 q <- afc %>% 
