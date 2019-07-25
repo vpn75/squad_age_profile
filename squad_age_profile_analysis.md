@@ -52,70 +52,7 @@ Let’s combine both sets into a single dataframe and take a peek.
 
 ``` r
 squad <- bind_rows(goalie, outfield)
-
-squad
 ```
-
-    ##                           Name POS Age     HT      WT            NAT APP
-    ## 1                   Petr Cech1   G  37  6' 5" 198 lbs Czech Republic   7
-    ## 2                 Bernd Leno19   G  27  6' 3" 183 lbs        Germany  32
-    ## 3             Héctor Bellerín2   D  24 5' 10" 161 lbs          Spain  19
-    ## 4   Sokratis Papastathopoulos5   D  31  6' 1" 181 lbs         Greece  25
-    ## 5           Laurent Koscielny6   D  33  6' 1" 163 lbs         France  17
-    ## 6       Stephan Lichtsteiner12   D  35 5' 11" 152 lbs    Switzerland  14
-    ## 7                Rob Holding16   D  23  6' 2" 163 lbs        England  10
-    ## 8              Nacho Monreal18   D  33 5' 10" 159 lbs          Spain  22
-    ## 9           Shkodran Mustafi20   D  27  6' 0" 181 lbs        Germany  31
-    ## 10            Carl Jenkinson25   D  27  6' 1" 170 lbs        England   3
-    ## 11   Konstantinos Mavropanos27   D  21  6' 4" 192 lbs         Greece   4
-    ## 12            Sead Kolasinac31   D  26  6' 0" 185 lbs        Germany  24
-    ## 13               Zech Medley47   D  19  6' 5"       -        England   0
-    ## 14               Bukayo Saka87   D  17 5' 10"       -        England   1
-    ## 15             Mohamed Elneny4   M  27 5' 11" 161 lbs          Egypt   8
-    ## 16         Henrikh Mkhitaryan7   M  30 5' 10" 163 lbs        Armenia  25
-    ## 17               Aaron Ramsey8   M  28 5' 10" 168 lbs          Wales  28
-    ## 18                Mesut Özil10   M  30 5' 11" 168 lbs        Germany  24
-    ## 19            Lucas Torreira11   M  23  5' 6" 139 lbs        Uruguay  34
-    ## 20    Ainsley Maitland-Niles15   M  21 5' 10" 157 lbs        England  16
-    ## 21                Alex Iwobi17   M  23 5' 11" 163 lbs        Nigeria  35
-    ## 22              Denis Suárez22   M  25  5' 9" 150 lbs          Spain   4
-    ## 23          Matteo Guendouzi29   M  20  6' 1" 139 lbs         France  33
-    ## 24              Granit Xhaka34   M  26  6' 0" 181 lbs    Switzerland  29
-    ## 25            Joseph Willock59   M  19 5' 10" 157 lbs        England   2
-    ## 26        Alexandre Lacazette9   F  28  5' 9" 161 lbs         France  35
-    ## 27 Pierre-Emerick Aubameyang14   F  30  6' 2" 174 lbs          Gabon  36
-    ## 28             Danny Welbeck23   F  28  6' 0" 161 lbs        England   8
-    ## 29            Edward Nketiah49   F  20  5' 9" 159 lbs        England   5
-    ##    SUB  SV GA A FC FA YC RC     G SH ST
-    ## 1    0  28  9 0  0  2  0  0 NA NA NA NA
-    ## 2    1 102 42 0  0  5  0  0 NA NA NA NA
-    ## 3    1  NA NA 5 16  6  3  0 NA  0 18  4
-    ## 4    0  NA NA 2 37 25 12  0 NA  1 11  2
-    ## 5    4  NA NA 0  9 14  1  0 NA  3  5  4
-    ## 6    4  NA NA 0 11 10  3  0 NA  0  1  0
-    ## 7    1  NA NA 0  6  2  1  0 NA  0  2  0
-    ## 8    1  NA NA 3 17 21  5  0 NA  1  7  4
-    ## 9    0  NA NA 0 42  8  9  0 NA  2 18  9
-    ## 10   1  NA NA 0  1  0  0  0 NA  0  0  0
-    ## 11   1  NA NA 0  2  0  1  0 NA  0  2  0
-    ## 12   2  NA NA 5 21 10  5  0 NA  0  9  2
-    ## 13   0  NA NA 0  0  0  0  0 NA  0  0  0
-    ## 14   1  NA NA 0  0  0  0  0 NA  0  0  0
-    ## 15   3  NA NA 0  1  0  0  0 NA  0  7  0
-    ## 16   6  NA NA 4 27 10  1  0 NA  6 49 14
-    ## 17  14  NA NA 6 21 20  0  0 NA  4 33 13
-    ## 18   4  NA NA 2 10 22  2  0 NA  5 11  6
-    ## 19  10  NA NA 2 38 77  7  1 NA  2 25  6
-    ## 20   5  NA NA 1  8 12  1  1 NA  1  5  3
-    ## 21  13  NA NA 6  8 13  0  0 NA  3 35 14
-    ## 22   4  NA NA 0  0  1  0  0 NA  0  0  0
-    ## 23  10  NA NA 0 24 62  9  0 NA  0 16  4
-    ## 24   0  NA NA 2 45 52 10  0 NA  4 29 12
-    ## 25   1  NA NA 0  0  2  0  0 NA  0  2  0
-    ## 26   8  NA NA 8 51 54  2  0 NA 13 81 30
-    ## 27   6  NA NA 5 13 23  0  0 NA 22 94 40
-    ## 28   7  NA NA 1  3  2  0  0 NA  1  4  2
-    ## 29   5  NA NA 0  1  2  0  0 NA  1  3  1
 
 Let’s continue by keeping only our columns of interest.
 
@@ -129,40 +66,7 @@ squad <- squad %>%
     WT, 
     NAT
     )
-
-squad
 ```
-
-    ##                           Name Position Age     HT      WT            NAT
-    ## 1                   Petr Cech1        G  37  6' 5" 198 lbs Czech Republic
-    ## 2                 Bernd Leno19        G  27  6' 3" 183 lbs        Germany
-    ## 3             Héctor Bellerín2        D  24 5' 10" 161 lbs          Spain
-    ## 4   Sokratis Papastathopoulos5        D  31  6' 1" 181 lbs         Greece
-    ## 5           Laurent Koscielny6        D  33  6' 1" 163 lbs         France
-    ## 6       Stephan Lichtsteiner12        D  35 5' 11" 152 lbs    Switzerland
-    ## 7                Rob Holding16        D  23  6' 2" 163 lbs        England
-    ## 8              Nacho Monreal18        D  33 5' 10" 159 lbs          Spain
-    ## 9           Shkodran Mustafi20        D  27  6' 0" 181 lbs        Germany
-    ## 10            Carl Jenkinson25        D  27  6' 1" 170 lbs        England
-    ## 11   Konstantinos Mavropanos27        D  21  6' 4" 192 lbs         Greece
-    ## 12            Sead Kolasinac31        D  26  6' 0" 185 lbs        Germany
-    ## 13               Zech Medley47        D  19  6' 5"       -        England
-    ## 14               Bukayo Saka87        D  17 5' 10"       -        England
-    ## 15             Mohamed Elneny4        M  27 5' 11" 161 lbs          Egypt
-    ## 16         Henrikh Mkhitaryan7        M  30 5' 10" 163 lbs        Armenia
-    ## 17               Aaron Ramsey8        M  28 5' 10" 168 lbs          Wales
-    ## 18                Mesut Özil10        M  30 5' 11" 168 lbs        Germany
-    ## 19            Lucas Torreira11        M  23  5' 6" 139 lbs        Uruguay
-    ## 20    Ainsley Maitland-Niles15        M  21 5' 10" 157 lbs        England
-    ## 21                Alex Iwobi17        M  23 5' 11" 163 lbs        Nigeria
-    ## 22              Denis Suárez22        M  25  5' 9" 150 lbs          Spain
-    ## 23          Matteo Guendouzi29        M  20  6' 1" 139 lbs         France
-    ## 24              Granit Xhaka34        M  26  6' 0" 181 lbs    Switzerland
-    ## 25            Joseph Willock59        M  19 5' 10" 157 lbs        England
-    ## 26        Alexandre Lacazette9        F  28  5' 9" 161 lbs         France
-    ## 27 Pierre-Emerick Aubameyang14        F  30  6' 2" 174 lbs          Gabon
-    ## 28             Danny Welbeck23        F  28  6' 0" 161 lbs        England
-    ## 29            Edward Nketiah49        F  20  5' 9" 159 lbs        England
 
 We can also see we need to do some cleanup on the player names which
 annoyingly have their number appended at the end. We can take care of
@@ -203,41 +107,6 @@ squad <- squad %>%
 
     ## Warning in rlang::eval_tidy(~as.integer(str_replace(WT, "lbs", "")),
     ## <environment>): NAs introduced by coercion
-
-``` r
-squad
-```
-
-    ##                         Name Position Age     HT  WT            NAT
-    ## 1                  Petr Cech        G  37  6' 5" 198 Czech Republic
-    ## 2                 Bernd Leno        G  27  6' 3" 183        Germany
-    ## 3            Héctor Bellerín        D  24 5' 10" 161          Spain
-    ## 4  Sokratis Papastathopoulos        D  31  6' 1" 181         Greece
-    ## 5          Laurent Koscielny        D  33  6' 1" 163         France
-    ## 6       Stephan Lichtsteiner        D  35 5' 11" 152    Switzerland
-    ## 7                Rob Holding        D  23  6' 2" 163        England
-    ## 8              Nacho Monreal        D  33 5' 10" 159          Spain
-    ## 9           Shkodran Mustafi        D  27  6' 0" 181        Germany
-    ## 10            Carl Jenkinson        D  27  6' 1" 170        England
-    ## 11   Konstantinos Mavropanos        D  21  6' 4" 192         Greece
-    ## 12            Sead Kolasinac        D  26  6' 0" 185        Germany
-    ## 13               Zech Medley        D  19  6' 5"  NA        England
-    ## 14               Bukayo Saka        D  17 5' 10"  NA        England
-    ## 15            Mohamed Elneny        M  27 5' 11" 161          Egypt
-    ## 16        Henrikh Mkhitaryan        M  30 5' 10" 163        Armenia
-    ## 17              Aaron Ramsey        M  28 5' 10" 168          Wales
-    ## 18                Mesut Özil        M  30 5' 11" 168        Germany
-    ## 19            Lucas Torreira        M  23  5' 6" 139        Uruguay
-    ## 20    Ainsley Maitland-Niles        M  21 5' 10" 157        England
-    ## 21                Alex Iwobi        M  23 5' 11" 163        Nigeria
-    ## 22              Denis Suárez        M  25  5' 9" 150          Spain
-    ## 23          Matteo Guendouzi        M  20  6' 1" 139         France
-    ## 24              Granit Xhaka        M  26  6' 0" 181    Switzerland
-    ## 25            Joseph Willock        M  19 5' 10" 157        England
-    ## 26       Alexandre Lacazette        F  28  5' 9" 161         France
-    ## 27 Pierre-Emerick Aubameyang        F  30  6' 2" 174          Gabon
-    ## 28             Danny Welbeck        F  28  6' 0" 161        England
-    ## 29            Edward Nketiah        F  20  5' 9" 159        England
 
 Next, let’s convert our HT values to a standard of inches. We’ll have to
 separate out our height-feet and height-inches to calculate total height
@@ -321,6 +190,7 @@ align with our ratings data.
 ``` r
 squad[27,"Name"] = "Pierre Emerick-Aubameyang"
 squad[4, "Name"] = "Sokratis"
+
 afc <- inner_join(squad, player_agg, by=c("Name"="player_name"))
 ```
 
