@@ -1,17 +1,15 @@
 ---
 title: "Squad age profile"
 author: "Vamsi Nath"
-date: "7/22/2019"
-output: 
-  md_document:
-  variant: markdown_github
+date: "7/25/2019"
+output: md_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Arsenal squad age-profile analysis 2018-19 season
+## Arsenal Squad Age-Profile analysis
 
 This is small analytics exercise to examine the distribution of minutes played based on the age of the players.
 
@@ -112,7 +110,7 @@ squad <- squad %>%
   
 ```
 
-Now, we'll load our player-ratings data that was scraped from (WhoScored.com)[http://whoscored.com]
+Now, we'll load our player-ratings data that was scraped from [WhoScored.com](http://whoscored.com)
 
 ```{r}
 ratings <- readRDS("arsenal_whoscored_player_ratings.rds") %>% as_tibble

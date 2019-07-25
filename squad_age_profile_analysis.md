@@ -1,5 +1,5 @@
-Arsenal squad age-profile analysis 2018-19 season
--------------------------------------------------
+Arsenal Squad Age-Profile analysis
+----------------------------------
 
 This is small analytics exercise to examine the distribution of minutes
 played based on the age of the players.
@@ -272,7 +272,7 @@ the player’s position to a factor and change the level names.
       mutate(Position = factor(Position, levels = c("Defense","Forward","Goalie","Midfield"))) 
 
 Now, we’ll load our player-ratings data that was scraped from
-(WhoScored.com)\[<a href="http://whoscored.com" class="uri">http://whoscored.com</a>\]
+[WhoScored.com](http://whoscored.com)
 
     ratings <- readRDS("arsenal_whoscored_player_ratings.rds") %>% as_tibble
 
