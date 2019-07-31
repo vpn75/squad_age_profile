@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(dpi=300,fig.width=7)
+knitr::opts_chunk$set(dpi=300, fig.width=7)
 ```
 
 ## Arsenal Squad Age-Profile analysis
@@ -51,12 +51,14 @@ outfield <- read_html(url) %>%
   html_nodes("table") %>% 
   magrittr::extract2(6) %>% 
   html_table(fill = TRUE,  header = TRUE, trim = TRUE)
+
 ```
 
 Let's combine both sets into a single dataframe and take a peek.
 
 ```{r}
 squad <- bind_rows(goalie, outfield)
+
 ```
 
 Let's continue by keeping only our columns of interest.
@@ -78,6 +80,7 @@ We can also see we need to do some cleanup on the player names which annoyingly 
 
 ```{r}
 squad %>% mutate(Name = str_replace(Name, "\\d+$", "")) %>% pull(Name)
+
 ```
 
 OK, we can see the player-numbers were correctly removed from the Names so we'll go ahead and perform this cleaning step on our dataframe. While we're at it, let's also remove the "lbs" label from the WT column and convert it to an integer.
@@ -96,8 +99,9 @@ Next, let's convert our HT values to a standard of inches. We'll have to separat
   select(-drop) %>% 
   mutate_at(c("feet","inches"), as.integer) %>% 
   mutate(HT = (feet*12) + inches) %>% 
-  select(Name, Position, Age, HT, WT, NAT)
+  select(Name, Position, Age, HT, WT, NAT) 
 )
+
 ```
 
 For our final cleaning step, we will convert the POS column which holds the player's position to a factor and change the level names.
@@ -146,49 +150,56 @@ afc %>%
   ggplot(aes(x = Age, y = total_mins/(38*90), label = Name)) +
   geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
   geom_text(size = 3, vjust = "middle", hjust = "left", nudge_x = 0.3) +
-  scale_color_manual(values = c("navy","purple","yellow","maroon")) +
+  scale_color_manual(values = c("black","blue","orange","maroon")) +
   scale_x_continuous(breaks = seq(18,40, by=2)) +
   scale_y_continuous(labels = scales::percent_format()) +
   labs(y = "% of Total EPL Minutes")
 
 ```
 
-We can see the graph looks a bit easy with some overlapping names. We can use the `check_overlap` property to help deal with this, but I found it removed several key players from the graph. 
+We can see the graph looks a bit messy with some overlapping names. We can use the `check_overlap` property to help deal with this, but I found it removed several key players from the graph. 
 
 Another option to clean things up is by showing only the last-name. We'll use the handy tidyr `extract` function to accomplish this.
 
 ```{r}
-(
-  afc <- extract(afc, Name, c("fname","lname"), "([^ ]+)(.*)", remove = FALSE)
-)
+afc <- extract(afc, Name, c("fname","lname"), "([^ ]+)(.*)", remove = FALSE)
 
 afc[4, "lname"] = "Sokratis"
 
-q <- afc %>% 
-  ggplot(aes(x = Age, y = total_mins/(38*90), label = lname)) +
+
+
+p <- afc %>% ggplot(aes(x = Age, y = total_mins/(38*90), label = lname))
+
+p + 
   geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
   geom_text(size = 3, vjust = "top", hjust = "middle", nudge_y = -0.02, nudge_x = 0.5) +
-  scale_color_manual(values = c("navy","purple","yellow","maroon")) +
+  scale_color_manual(values = c("black","blue","orange","maroon")) +
   scale_x_continuous(breaks = seq(18,40, by=2)) +
   scale_y_continuous(labels = scales::percent_format()) +
   labs(y = "% Played of Total EPL Minutes")
 
-q
 ```
 
 
 This looks good but let's go one-step farther by adding a shaded region showing the peak age-bracket which we'll define as from 25 - 30 years old.
 
 ```{r}
+p <- p +
+  geom_rect(fill = "green", alpha = 0.01, aes(xmin=25, xmax=30, ymin=0, ymax=1)) +
+  geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
+  geom_text(size = 3, vjust = "top", hjust = "middle", nudge_y = -0.02, nudge_x = 0.5) +
+  scale_color_manual(values = c("black","blue","orange","maroon")) +
+  scale_x_continuous(breaks = seq(18,40, by=2)) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(y = "% Played of Total EPL Minutes")
 
-q <- q + geom_rect(fill = "green", alpha = 0.01, aes(xmin=25, xmax=30, ymin=0, ymax=1))
-
+p
 ```
 
 we'll wrap up by adding a title and some annotations.
 
 ```{r}
-q + labs(
+p + labs(
   title = "Arsenal | Squad Age Profile Analysis",
   subtitle = "Premier League, 2018/19",
   caption = "Data from Whoscored.com/ESPN"
@@ -196,5 +207,3 @@ q + labs(
   annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 4.0) +
   annotate("text", x = 36.5, y = 0.99, label = "@DesiGoonerMD", size = 2.5)
 ```
-
-

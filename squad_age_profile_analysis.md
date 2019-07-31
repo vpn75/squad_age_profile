@@ -117,7 +117,7 @@ in inches.
   select(-drop) %>% 
   mutate_at(c("feet","inches"), as.integer) %>% 
   mutate(HT = (feet*12) + inches) %>% 
-  select(Name, Position, Age, HT, WT, NAT)
+  select(Name, Position, Age, HT, WT, NAT) 
 )
 ```
 
@@ -203,7 +203,7 @@ afc %>%
   ggplot(aes(x = Age, y = total_mins/(38*90), label = Name)) +
   geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
   geom_text(size = 3, vjust = "middle", hjust = "left", nudge_x = 0.3) +
-  scale_color_manual(values = c("navy","purple","yellow","maroon")) +
+  scale_color_manual(values = c("black","blue","orange","maroon")) +
   scale_x_continuous(breaks = seq(18,40, by=2)) +
   scale_y_continuous(labels = scales::percent_format()) +
   labs(y = "% of Total EPL Minutes")
@@ -211,7 +211,7 @@ afc %>%
 
 ![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
-We can see the graph looks a bit easy with some overlapping names. We
+We can see the graph looks a bit messy with some overlapping names. We
 can use the `check_overlap` property to help deal with this, but I found
 it removed several key players from the graph.
 
@@ -219,77 +219,21 @@ Another option to clean things up is by showing only the last-name.
 We’ll use the handy tidyr `extract` function to accomplish this.
 
 ``` r
-(
-  afc <- extract(afc, Name, c("fname","lname"), "([^ ]+)(.*)", remove = FALSE)
-)
-```
+afc <- extract(afc, Name, c("fname","lname"), "([^ ]+)(.*)", remove = FALSE)
 
-    ##                         Name        fname               lname Position Age
-    ## 1                  Petr Cech         Petr                Cech   Goalie  37
-    ## 2                 Bernd Leno        Bernd                Leno   Goalie  27
-    ## 3            Héctor Bellerín       Héctor            Bellerín  Defense  24
-    ## 4                   Sokratis     Sokratis                      Defense  31
-    ## 5          Laurent Koscielny      Laurent           Koscielny  Defense  33
-    ## 6       Stephan Lichtsteiner      Stephan        Lichtsteiner  Defense  35
-    ## 7                Rob Holding          Rob             Holding  Defense  23
-    ## 8              Nacho Monreal        Nacho             Monreal  Defense  33
-    ## 9           Shkodran Mustafi     Shkodran             Mustafi  Defense  27
-    ## 10            Carl Jenkinson         Carl           Jenkinson  Defense  27
-    ## 11   Konstantinos Mavropanos Konstantinos          Mavropanos  Defense  21
-    ## 12            Sead Kolasinac         Sead           Kolasinac  Defense  26
-    ## 13            Mohamed Elneny      Mohamed              Elneny Midfield  27
-    ## 14        Henrikh Mkhitaryan      Henrikh          Mkhitaryan Midfield  30
-    ## 15              Aaron Ramsey        Aaron              Ramsey Midfield  28
-    ## 16                Mesut Özil        Mesut                Özil Midfield  30
-    ## 17            Lucas Torreira        Lucas            Torreira Midfield  23
-    ## 18    Ainsley Maitland-Niles      Ainsley      Maitland-Niles Midfield  21
-    ## 19                Alex Iwobi         Alex               Iwobi Midfield  23
-    ## 20              Denis Suárez        Denis              Suárez Midfield  25
-    ## 21          Matteo Guendouzi       Matteo           Guendouzi Midfield  20
-    ## 22              Granit Xhaka       Granit               Xhaka Midfield  26
-    ## 23       Alexandre Lacazette    Alexandre           Lacazette  Forward  28
-    ## 24 Pierre Emerick-Aubameyang       Pierre  Emerick-Aubameyang  Forward  30
-    ## 25             Danny Welbeck        Danny             Welbeck  Forward  28
-    ##    HT  WT            NAT total_mins avg_rating
-    ## 1  77 198 Czech Republic        588   7.050000
-    ## 2  75 183        Germany       2832   6.682188
-    ## 3  70 161          Spain       1533   6.714211
-    ## 4  73 181         Greece       2199   6.815200
-    ## 5  73 163         France       1330   6.917647
-    ## 6  71 152    Switzerland        940   6.292143
-    ## 7  74 163        England        807   6.740000
-    ## 8  70 159          Spain       1861   6.969091
-    ## 9  72 181        Germany       2615   7.060968
-    ## 10 73 170        England        165   6.310000
-    ## 11 76 192         Greece        149   6.610000
-    ## 12 72 185        Germany       1890   6.609583
-    ## 13 71 161          Egypt        379   6.462500
-    ## 14 70 163        Armenia       1644   6.877600
-    ## 15 70 168          Wales       1328   6.703929
-    ## 16 71 168        Germany       1741   6.777500
-    ## 17 66 139        Uruguay       2385   6.727353
-    ## 18 70 157        England        986   6.635625
-    ## 19 71 163        Nigeria       1972   6.622000
-    ## 20 69 150          Spain         67   6.162500
-    ## 21 73 139         France       2142   6.559394
-    ## 22 72 181    Switzerland       2501   7.027931
-    ## 23 69 161         France       2505   7.171714
-    ## 24 74 174          Gabon       2732   7.097500
-    ## 25 72 161        England        147   6.393750
-
-``` r
 afc[4, "lname"] = "Sokratis"
 
-q <- afc %>% 
-  ggplot(aes(x = Age, y = total_mins/(38*90), label = lname)) +
+
+
+p <- afc %>% ggplot(aes(x = Age, y = total_mins/(38*90), label = lname))
+
+p + 
   geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
   geom_text(size = 3, vjust = "top", hjust = "middle", nudge_y = -0.02, nudge_x = 0.5) +
-  scale_color_manual(values = c("navy","purple","yellow","maroon")) +
+  scale_color_manual(values = c("black","blue","orange","maroon")) +
   scale_x_continuous(breaks = seq(18,40, by=2)) +
   scale_y_continuous(labels = scales::percent_format()) +
   labs(y = "% Played of Total EPL Minutes")
-
-q
 ```
 
 ![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-14-1.png)
@@ -299,13 +243,24 @@ showing the peak age-bracket which we’ll define as from 25 - 30 years
 old.
 
 ``` r
-q <- q + geom_rect(fill = "green", alpha = 0.01, aes(xmin=25, xmax=30, ymin=0, ymax=1))
+p <- p +
+  geom_rect(fill = "green", alpha = 0.01, aes(xmin=25, xmax=30, ymin=0, ymax=1)) +
+  geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
+  geom_text(size = 3, vjust = "top", hjust = "middle", nudge_y = -0.02, nudge_x = 0.5) +
+  scale_color_manual(values = c("black","blue","orange","maroon")) +
+  scale_x_continuous(breaks = seq(18,40, by=2)) +
+  scale_y_continuous(labels = scales::percent_format()) +
+  labs(y = "% Played of Total EPL Minutes")
+
+p
 ```
+
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
 we’ll wrap up by adding a title and some annotations.
 
 ``` r
-q + labs(
+p + labs(
   title = "Arsenal | Squad Age Profile Analysis",
   subtitle = "Premier League, 2018/19",
   caption = "Data from Whoscored.com/ESPN"
