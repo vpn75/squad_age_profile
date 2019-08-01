@@ -66,7 +66,25 @@ squad <- squad %>%
     WT, 
     NAT
     )
+
+squad %>% pull(Name)
 ```
+
+    ##  [1] "Petr Cech1"                  "Bernd Leno19"               
+    ##  [3] "Héctor Bellerín2"            "Sokratis Papastathopoulos5" 
+    ##  [5] "Laurent Koscielny6"          "Stephan Lichtsteiner12"     
+    ##  [7] "Rob Holding16"               "Nacho Monreal18"            
+    ##  [9] "Shkodran Mustafi20"          "Carl Jenkinson25"           
+    ## [11] "Konstantinos Mavropanos27"   "Sead Kolasinac31"           
+    ## [13] "Zech Medley47"               "Bukayo Saka87"              
+    ## [15] "Mohamed Elneny4"             "Henrikh Mkhitaryan7"        
+    ## [17] "Aaron Ramsey8"               "Mesut Özil10"               
+    ## [19] "Lucas Torreira11"            "Ainsley Maitland-Niles15"   
+    ## [21] "Alex Iwobi17"                "Denis Suárez22"             
+    ## [23] "Matteo Guendouzi29"          "Granit Xhaka34"             
+    ## [25] "Joseph Willock59"            "Alexandre Lacazette9"       
+    ## [27] "Pierre-Emerick Aubameyang14" "Danny Welbeck23"            
+    ## [29] "Edward Nketiah49"
 
 We can also see we need to do some cleanup on the player names which
 annoyingly have their number appended at the end. We can take care of
@@ -157,9 +175,7 @@ the player’s position to a factor and change the level names.
 
 ``` r
 squad <- squad %>% 
-  mutate(Position = as.factor(Position))
-
-levels(squad$Position) <- c("Defense","Forward","Goalie","Midfield")
+  mutate(Position = factor(Position, labels=c("Defense","Forward","Goalie","Midfield")))
 ```
 
 Now, we’ll load our player-ratings data that was scraped from
@@ -175,9 +191,7 @@ and calculate total minutes played.
 ``` r
 player_agg <- ratings %>% 
   group_by(player_name) %>% 
-  summarise(
-    total_mins = sum(minutes_played),
-    avg_rating = mean(rating)
+  summarize(total_mins = sum(minutes_played), avg_rating = mean(rating)
             ) %>% 
   arrange(desc(total_mins))
 ```
@@ -223,8 +237,6 @@ afc <- extract(afc, Name, c("fname","lname"), "([^ ]+)(.*)", remove = FALSE)
 
 afc[4, "lname"] = "Sokratis"
 
-
-
 p <- afc %>% ggplot(aes(x = Age, y = total_mins/(38*90), label = lname))
 
 p + 
@@ -265,8 +277,7 @@ p + labs(
   subtitle = "Premier League, 2018/19",
   caption = "Data from Whoscored.com/ESPN"
 ) +
-  annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 4.0) +
-  annotate("text", x = 36.5, y = 0.99, label = "@DesiGoonerMD", size = 2.5)
+  annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 4.0)
 ```
 
 ![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-16-1.png)

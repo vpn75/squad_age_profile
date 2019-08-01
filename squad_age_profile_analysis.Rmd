@@ -1,7 +1,7 @@
 ---
 title: "Squad age profile"
 author: "Vamsi Nath"
-date: "7/25/2019"
+date: "7/31/2019"
 output: 
   md_document:
     variant: markdown_github
@@ -74,6 +74,7 @@ squad <- squad %>%
     NAT
     )
 
+squad %>% pull(Name)
 ```
 
 We can also see we need to do some cleanup on the player names which annoyingly have their number appended at the end. We can take care of this easily though with a string replace using a regular expression. Let's do a quick sanity-check before we make the update to our dataframe.
@@ -108,10 +109,8 @@ For our final cleaning step, we will convert the POS column which holds the play
 
 ```{r}
 squad <- squad %>% 
-  mutate(Position = as.factor(Position))
+  mutate(Position = factor(Position, labels=c("Defense","Forward","Goalie","Midfield")))
 
-levels(squad$Position) <- c("Defense","Forward","Goalie","Midfield")
-  
 ```
 
 Now, we'll load our player-ratings data that was scraped from [WhoScored.com](http://whoscored.com)
@@ -125,9 +124,7 @@ We'll aggregate to the player-level taking the average of their rating and calcu
 ```{r}
 player_agg <- ratings %>% 
   group_by(player_name) %>% 
-  summarise(
-    total_mins = sum(minutes_played),
-    avg_rating = mean(rating)
+  summarize(total_mins = sum(minutes_played), avg_rating = mean(rating)
             ) %>% 
   arrange(desc(total_mins))
 ```
@@ -166,8 +163,6 @@ afc <- extract(afc, Name, c("fname","lname"), "([^ ]+)(.*)", remove = FALSE)
 
 afc[4, "lname"] = "Sokratis"
 
-
-
 p <- afc %>% ggplot(aes(x = Age, y = total_mins/(38*90), label = lname))
 
 p + 
@@ -204,6 +199,6 @@ p + labs(
   subtitle = "Premier League, 2018/19",
   caption = "Data from Whoscored.com/ESPN"
 ) +
-  annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 4.0) +
-  annotate("text", x = 36.5, y = 0.99, label = "@DesiGoonerMD", size = 2.5)
+  annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 4.0)
+  
 ```
