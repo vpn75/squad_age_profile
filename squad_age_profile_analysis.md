@@ -223,7 +223,7 @@ afc %>%
   labs(y = "% of Total EPL Minutes")
 ```
 
-<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-13-1.png" width="8" />
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
 We can see the graph looks a bit messy with some overlapping names. We
 can use the `ggrepel` package to help clean things up.
@@ -243,7 +243,7 @@ p +
   labs(y = "% Played of Total EPL Minutes")
 ```
 
-<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-14-1.png" width="8" />
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 This looks good but let’s go one-step farther by adding a shaded region
 showing the peak age-bracket which we’ll define as from 25 - 30 years
@@ -262,7 +262,7 @@ p <- p +
 p
 ```
 
-<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-15-1.png" width="8" />
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
 we’ll wrap up by adding a title and some annotations.
 
@@ -275,4 +275,4 @@ p + labs(
   annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 4.0)
 ```
 
-<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-16-1.png" width="8" />
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-16-1.png)
