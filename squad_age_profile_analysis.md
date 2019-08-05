@@ -223,7 +223,7 @@ afc %>%
   labs(y = "% of Total EPL Minutes")
 ```
 
-![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-13-1.png)
+<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-13-1.png" width="7" />
 
 We can see the graph looks a bit messy with some overlapping names. We
 can use the `ggrepel` package to help clean things up.
@@ -236,14 +236,14 @@ p <- afc %>% ggplot(aes(x = Age, y = total_mins/(38*90)))
 
 p + 
   geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
-  ggrepel::geom_text_repel(aes(label = Name), hjust = 0.5) +
+  ggrepel::geom_text_repel(aes(label = Name), hjust = 0.5, size = 2.5, point.padding = 0.05) +
   scale_color_manual(values = c("orange","black","maroon","blue")) +
   scale_x_continuous(breaks = seq(18,40, by=2)) +
   scale_y_continuous(labels = scales::percent_format()) +
   labs(y = "% Played of Total EPL Minutes")
 ```
 
-![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-14-1.png)
+<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-14-1.png" width="7" />
 
 This looks good but let’s go one-step farther by adding a shaded region
 showing the peak age-bracket which we’ll define as from 25 - 30 years
@@ -253,7 +253,7 @@ old.
 p <- p +
   geom_rect(fill = "green", alpha = 0.01, aes(xmin=25, xmax=30, ymin=0, ymax=1)) +
   geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
-  ggrepel::geom_text_repel(aes(label = Name), hjust = 0.5) +
+  ggrepel::geom_text_repel(aes(label = Name), hjust = 0.5, size = 2.5, point.padding = 0.1) +
   scale_color_manual(values = c("orange","black","maroon","blue")) +
   scale_x_continuous(breaks = seq(18,40, by=2)) +
   scale_y_continuous(labels = scales::percent_format()) +
@@ -262,7 +262,7 @@ p <- p +
 p
 ```
 
-![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-15-1.png)
+<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-15-1.png" width="7" />
 
 we’ll wrap up by adding a title and some annotations.
 
@@ -272,7 +272,15 @@ p + labs(
   subtitle = "Premier League, 2018/19",
   caption = "Data from Whoscored.com/ESPN"
 ) +
-  annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 4.0)
+  theme(
+    axis.title=element_text(size=6.0),
+    plot.title = element_text(size = 8.0), 
+    plot.subtitle = element_text(size = 6.0),
+    plot.caption = element_text(size = 3.0),
+    legend.title = element_text(size = 6.0),
+    legend.text = element_text(size = 4.0)
+    ) +
+  annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 3.5)
 ```
 
-![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-16-1.png)
+<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-16-1.png" width="7" />
