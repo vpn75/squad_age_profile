@@ -123,9 +123,6 @@ squad <- squad %>%
   mutate(WT = as.integer(str_replace(WT, "lbs", ""))) 
 ```
 
-    ## Warning in rlang::eval_tidy(~as.integer(str_replace(WT, "lbs", "")),
-    ## <environment>): NAs introduced by coercion
-
 Next, let’s convert our HT values to a standard of inches. We’ll have to
 separate out our height-feet and height-inches to calculate total height
 in inches.
@@ -215,15 +212,15 @@ theme_set(theme_light())
 
 afc %>% 
   ggplot(aes(x = Age, y = total_mins/(38*90), label = Name)) +
-  geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
-  geom_text(size = 3, vjust = "middle", hjust = "left", nudge_x = 0.3) +
+  geom_point(aes(color = Position), size = 2.0, alpha = 0.9) +
+  geom_text(size = 2.0, vjust = "middle", hjust = "left", nudge_x = 0.3) +
   scale_color_manual(values = c("orange","black","maroon","blue")) +
   scale_x_continuous(breaks = seq(18,40, by=2)) +
   scale_y_continuous(labels = scales::percent_format()) +
   labs(y = "% of Total EPL Minutes")
 ```
 
-<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-13-1.png" width="7" />
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
 We can see the graph looks a bit messy with some overlapping names. We
 can use the `ggrepel` package to help clean things up.
@@ -232,18 +229,28 @@ Another option to clean things up is by showing only the last-name.
 We’ll use the handy tidyr `extract` function to accomplish this.
 
 ``` r
-p <- afc %>% ggplot(aes(x = Age, y = total_mins/(38*90)))
+p <- afc %>% ggplot(aes(x = Age, y = total_mins/(38*90))) +
+  theme(
+      axis.title=element_text(size=6.0),
+      plot.title = element_text(size = 8.0), 
+      plot.subtitle = element_text(size = 6.0),
+      plot.caption = element_text(size = 4.0),
+      legend.title = element_text(size = 6.0),
+      legend.text = element_text(size = 5.0),
+      axis.text.x = element_text(size = 4.0),
+      axis.text.y = element_text(size = 4.0) 
+      )
 
 p + 
-  geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
-  ggrepel::geom_text_repel(aes(label = Name), hjust = 0.5, size = 2.5, point.padding = 0.05) +
+  geom_point(aes(color = Position), size = 2.0, alpha = 0.9) +
+  ggrepel::geom_text_repel(aes(label = Name), hjust = 0.5, size = 2.0, point.padding = 0.05) +
   scale_color_manual(values = c("orange","black","maroon","blue")) +
   scale_x_continuous(breaks = seq(18,40, by=2)) +
   scale_y_continuous(labels = scales::percent_format()) +
   labs(y = "% Played of Total EPL Minutes")
 ```
 
-<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-14-1.png" width="7" />
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 This looks good but let’s go one-step farther by adding a shaded region
 showing the peak age-bracket which we’ll define as from 25 - 30 years
@@ -252,8 +259,8 @@ old.
 ``` r
 p <- p +
   geom_rect(fill = "green", alpha = 0.01, aes(xmin=25, xmax=30, ymin=0, ymax=1)) +
-  geom_point(aes(color = Position), size = 3.0, alpha = 0.9) +
-  ggrepel::geom_text_repel(aes(label = Name), hjust = 0.5, size = 2.5, point.padding = 0.1) +
+  geom_point(aes(color = Position), size = 2.0, alpha = 0.9) +
+  ggrepel::geom_text_repel(aes(label = Name), hjust = 0.5, size = 2.0, point.padding = 0.1) +
   scale_color_manual(values = c("orange","black","maroon","blue")) +
   scale_x_continuous(breaks = seq(18,40, by=2)) +
   scale_y_continuous(labels = scales::percent_format()) +
@@ -262,7 +269,7 @@ p <- p +
 p
 ```
 
-<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-15-1.png" width="7" />
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
 we’ll wrap up by adding a title and some annotations.
 
@@ -272,15 +279,7 @@ p + labs(
   subtitle = "Premier League, 2018/19",
   caption = "Data from Whoscored.com/ESPN"
 ) +
-  theme(
-    axis.title=element_text(size=6.0),
-    plot.title = element_text(size = 8.0), 
-    plot.subtitle = element_text(size = 6.0),
-    plot.caption = element_text(size = 3.0),
-    legend.title = element_text(size = 6.0),
-    legend.text = element_text(size = 4.0)
-    ) +
-  annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 3.5)
+  annotate("text", x = 28, y = 0.95, label = "Peak Years", size = 3.0)
 ```
 
-<img src="squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-16-1.png" width="7" />
+![](squad_age_profile_analysis_files/figure-markdown_github/unnamed-chunk-16-1.png)
